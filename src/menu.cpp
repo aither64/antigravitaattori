@@ -1,5 +1,6 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include <GL/glu.h>
 #include <AL/al.h>
 
 #include "antigrav.h"
@@ -7,8 +8,9 @@
 const float Menu::ANIMLEN = 0.25;
 GLuint Menu::keys[4];
 
-Menu::Menu()
+Menu::Menu(SDL_Window *window)
 {
+	this->window = window;
 	int vp[4];
 	glGetIntegerv(GL_VIEWPORT, vp);
 	width = vp[2];
@@ -224,6 +226,6 @@ void Menu::update()
 
 
 	// Draw other stuff
-	SDL_GL_SwapBuffers();
+	SDL_GL_SwapWindow(window);
 }
 

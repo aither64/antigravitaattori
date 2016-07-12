@@ -1,9 +1,11 @@
 #ifndef _MENU_H_
 #define _MENU_H_
 
+#include "SDL.h"
+
 class Menu {
 	public:
-		Menu();
+		Menu(SDL_Window *window);
 		static int init();
 
 		int show();
@@ -12,6 +14,7 @@ class Menu {
 		void drawPlayer(int p);
 		void update();
 
+		SDL_Window *window;
 		int width, height;
 		float anim[4];
 		float startanim;

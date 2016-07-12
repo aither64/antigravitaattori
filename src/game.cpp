@@ -1,6 +1,8 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include "SDL_keycode.h"
 
+#include <GL/glu.h>
 #include <AL/al.h>
 #include <cmath>
 
@@ -12,7 +14,7 @@ const int Game::CONTROLS[MAX_LOCAL_PLAYERS][NUM_CONTROLS] = {
 	{SDLK_RIGHT, SDLK_LEFT, SDLK_UP},
 	{SDLK_d, SDLK_a, SDLK_w},
 	{SDLK_l, SDLK_j, SDLK_i},
-	{SDLK_KP6, SDLK_KP4, SDLK_KP8}};
+	{SDLK_KP_6, SDLK_KP_4, SDLK_KP_8}};
 
 const char *Game::PLAYER_TEXTURES[MAX_PLAYERS] = {"", "racer1.png", "racer2.png", "racer3.png", "racer4.png", "racer5.png", "racer6.png", "racer7.png"};
 const float Game::PLAYER_COLORS[MAX_PLAYERS][3] = {{1,0,0},{0,0,1},{0,1,0},{1,1,0}, {0.65, 0, 1}, {0.20, 0.64, 0.69}, {0.89, 0.63, 0.18}, {0.59, 0.56, 0.88}};
@@ -64,8 +66,10 @@ Level &Game::getLevel()
 	return level;
 }
 
-int Game::init()
+int Game::init(SDL_Window *window)
 {
+	this->window = window;
+
 	// Get viewport
 	glGetIntegerv(GL_VIEWPORT, masterViewport);
 	screenWidth = masterViewport[2];
@@ -486,7 +490,7 @@ void Game::drawFrame()
 		
 	drawHud();
 		
-	SDL_GL_SwapBuffers();
+	SDL_GL_SwapWindow(window);
 }
 
 void Game::draw3d(const float *eye, const float *at, float fovDiag)

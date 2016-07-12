@@ -1,6 +1,8 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
+#include "SDL.h"
+
 class Craft;
 class Level;
 
@@ -29,7 +31,7 @@ public:
 	static const float PLAYER_COLORS[MAX_PLAYERS][3];
 	static const int CONTROLS[MAX_LOCAL_PLAYERS][NUM_CONTROLS];
 
-	int init();
+	int init(SDL_Window *window);
 
 	int gameLoop();
 	
@@ -61,6 +63,8 @@ private:
 	void resetListener();
 	void updateListener();
 	
+	SDL_Window *window;
+
 	Player players[MAX_PLAYERS];
 	Level level;
 	

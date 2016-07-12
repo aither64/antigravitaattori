@@ -84,7 +84,7 @@ void cleanup()
 
 int main(int argc, char *argv[])
 {
-	SDL_Surface *screen;
+	SDL_Window *screen;
 	
 	(void)argc;
 	(void)argv;
@@ -109,18 +109,27 @@ int main(int argc, char *argv[])
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 	}
 
-	Uint32 flags = SDL_OPENGL;
-	if(opt_fullscreen) flags |= SDL_FULLSCREEN;
+	Uint32 flags = SDL_WINDOW_OPENGL;
+	if(opt_fullscreen) flags |= SDL_WINDOW_FULLSCREEN;
 	
 	int width = opt_width;
 	int height = width * 3 / 4;
 
-	screen = SDL_SetVideoMode(width, height, 0, flags);
+	screen = SDL_CreateWindow(
+		"antigravitaattori",
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
+		width, height,
+		flags
+	);
+
 	if(screen == NULL)
 	{
 		fprintf(stderr, "Can't set video mode: %s\n", SDL_GetError());
 		return -1;
 	}
+
+	SDL_GLContext glcontext = SDL_GL_CreateContext(screen);
 	
 #ifdef HAVE_MULTITEX
 	mglActiveTextureARB = (MFNGLACTIVETEXTUREARBPROC)SDL_GL_GetProcAddress("glActiveTextureARB");
@@ -147,22 +156,22 @@ int main(int argc, char *argv[])
 		}
 	}
 	
-	SDL_WM_SetCaption("antigravitaattori", "antigravitaattori");
-	
 	// disable mouse cursor
 	SDL_ShowCursor(SDL_DISABLE);
 
 	Game &game = Game::getInstance();
-	if(game.init()) return 1;
+	if(game.init(screen)) return 1;
 	if(Menu::init()) return 1;
 
-	Menu menu;
+	Menu menu(screen);
 	while(1) {
 		if(menu.show())
 			return 0;
 		if(game.gameLoop())
 			return 0;
 	}
+
+	SDL_GL_DeleteContext(glcontext);
 	
 	return 0;
 }

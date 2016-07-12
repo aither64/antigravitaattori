@@ -43,8 +43,8 @@ AC_ARG_ENABLE([debug],
 	[debug=no])
 
 dnl AC_DEFINE_UNQUOTED([DEBUG],[],[Debugging]))
-dnl Check for SDL
-AM_PATH_SDL(1.1.5,,AC_MSG_ERROR([*** SDL >= 1.1.5 not found ***]))
+dnl Check for SDL2
+AM_PATH_SDL2(2.0.0,,AC_MSG_ERROR([*** SDL >= 2.0.0 not found ***]))
 
 HAVE_OPENGL=no
 AC_CHECK_HEADER(GL/gl.h,HAVE_OPENGL=yes,AC_MSG_ERROR([*** OpenGL not found ***]))
@@ -59,6 +59,6 @@ else
 fi
 
 CFLAGS="$CXXFLAGS"
-LIBS="$LIBS $SDL_LIBS"
+LIBS="$LIBS -lSDL2"
 
 AC_OUTPUT(Makefile src/Makefile src/tinyxml/Makefile data/Makefile extra/Makefile)
