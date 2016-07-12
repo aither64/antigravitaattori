@@ -247,7 +247,7 @@ int m3dTexture::loadPNG(unsigned char **data, unsigned int *width, unsigned int 
 		return -1;
 	}
 
-	if(setjmp(pngPtr->jmpbuf))
+	if(setjmp(png_jmpbuf(pngPtr)))
 	{
 		perror("setjmp");
 		png_destroy_read_struct(&pngPtr, &pngInfoPtr, NULL);
@@ -272,7 +272,7 @@ int m3dTexture::loadPNG(unsigned char **data, unsigned int *width, unsigned int 
 		ckey = 0;
 	}
 	
-	if(colorType != PNG_COLOR_TYPE_RGB_ALPHA || bitDepth != 8 || pngInfoPtr->channels != 4)
+	if(colorType != PNG_COLOR_TYPE_RGB_ALPHA || bitDepth != 8 || png_get_channels(pngPtr, pngInfoPtr) != 4)
 	{
 		fprintf(stderr, "Only 32-bit RGBA png images are supported\n");
 		return -1;
@@ -281,7 +281,7 @@ int m3dTexture::loadPNG(unsigned char **data, unsigned int *width, unsigned int 
 	png_read_update_info(pngPtr, pngInfoPtr);
 	png_get_IHDR(pngPtr, pngInfoPtr, (png_uint_32*)width, (png_uint_32*)height, &bitDepth, &colorType, &interlaceType, NULL, NULL);
 	
-	(*data) = new unsigned char[(*width) * (*height) * pngInfoPtr->channels];
+	(*data) = new unsigned char[(*width) * (*height) * png_get_channels(pngPtr, pngInfoPtr)];
 	if((*data) == NULL)
 	{
 		fprintf(stderr, "loadPng(): Out of memory !\n");
@@ -302,7 +302,7 @@ int m3dTexture::loadPNG(unsigned char **data, unsigned int *width, unsigned int 
 
 	for(row = 0; (unsigned int) row < (*height); row++)
 	{
-		rowPointers[row] = (png_bytep)*data + (row * (*width) * pngInfoPtr->channels);
+		rowPointers[row] = (png_bytep)*data + (row * (*width) * png_get_channels(pngPtr, pngInfoPtr));
 	}
 	png_read_image(pngPtr, rowPointers);
 	png_read_end(pngPtr, pngInfoPtr);
@@ -351,31 +351,36 @@ int m3dTexture::savePNG(const unsigned char *data, unsigned int width, unsigned 
 	png_infop pngInfoPtr;
 	png_bytep *rowPointers;
 	int i;
+	png_color_8 sig_bit;
 
 	pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	pngInfoPtr = png_create_info_struct(pngPtr);
 	png_set_write_fn(pngPtr, handle, pngWriteCallback, pngFlushCallback);
 
-	pngInfoPtr->width = width;
-	pngInfoPtr->height = height;
-	pngInfoPtr->rowbytes = width * 4;
-	pngInfoPtr->bit_depth = 8;
-	pngInfoPtr->interlace_type = 0;
-	pngInfoPtr->num_palette = 0;
-	pngInfoPtr->valid = 0;
+	png_set_IHDR(
+		pngPtr,
+		pngInfoPtr,
+		width,
+		height,
+		8,
+		PNG_COLOR_TYPE_RGB_ALPHA,
+		PNG_INTERLACE_NONE,
+		PNG_COMPRESSION_TYPE_DEFAULT,
+		PNG_FILTER_TYPE_DEFAULT
+	);
 
-	pngInfoPtr->sig_bit.red = 8;
-	pngInfoPtr->sig_bit.green = 8;
-	pngInfoPtr->sig_bit.blue = 8;
-	pngInfoPtr->sig_bit.alpha = 8;
+	sig_bit.red = 8;
+	sig_bit.green = 8;
+	sig_bit.blue = 8;
+	sig_bit.alpha = 8;
 
-	pngInfoPtr->color_type = PNG_COLOR_TYPE_RGB_ALPHA;
+	png_set_sBIT(pngPtr, pngInfoPtr, &sig_bit);
 
 	png_write_info(pngPtr, pngInfoPtr);
 
-	rowPointers = new png_bytep[pngInfoPtr->height];
+	rowPointers = new png_bytep[png_get_image_height(pngPtr, pngInfoPtr)];
 
-	for(i = 0; (unsigned int) i < pngInfoPtr->height; i++)
+	for(i = 0; (unsigned int) i < png_get_image_height(pngPtr, pngInfoPtr); i++)
 	{
 		rowPointers[i] = (unsigned char*)data + i * width * 4;
 	}
