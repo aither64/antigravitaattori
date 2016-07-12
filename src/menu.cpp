@@ -38,7 +38,7 @@ int Menu::show()
 	Game &game = Game::getInstance();
 	for(int p=0;p<4;p++) {
 		char name[20];
-		sprintf(name,"Pelaaja %d",p+1);
+		sprintf(name,"Player %d",p+1);
 		game.getPlayer(p).setLocal(true);
 		game.getPlayer(p).setActive(false);
 		game.getPlayer(p).setName(name);
@@ -187,7 +187,7 @@ void Menu::drawPlayer(int p)
 	if(anim[p]<ANIMLEN) {
 		glTranslatef((width/32.0)/2.0 - 12/2 , height/32.0-4.0, 0.0);
 		glColor4f(1,1,1,1-anim[p]/ANIMLEN);
-		font.drawString("Paina nappia");
+		font.drawString("Push a button");
 	}
 	glColor4f(1,1,1,1);
 }
@@ -217,7 +217,7 @@ void Menu::update()
 		Font &font = Font::getInstance();
 		glTranslatef((width/16.0)/2.0 - 13/2.0,(height/16.0)/2.0-1,0);
 		glColor4f(1,1,1,startanim/ANIMLEN);
-		font.drawString("Enter aloittaa");
+		font.drawString("Press Enter to start");
 		glColor4f(1,1,1,1);
 	}
 

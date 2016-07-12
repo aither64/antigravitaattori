@@ -808,7 +808,7 @@ void Game::drawStatistics(float width, float height)
 	glTranslatef(boxw/2-9,1,0);
 	
 	glScalef(2,2,1);
-	font.drawString("Kilpa ohi");
+	font.drawString("Race finished");
 	glPopMatrix();
 
 	glTranslatef(10,8,0);
@@ -822,16 +822,16 @@ void Game::drawStatistics(float width, float height)
 	glEnd();
 	glEnable(GL_TEXTURE_2D);
 
-	font.drawString("Pelaaja");
+	font.drawString("Player");
 	glTranslatef(40,0,0);
-	font.drawString("Aika");
+	font.drawString("Time");
 	glTranslatef(-40,4,0);
 
 	for(int p=0;p<MAX_PLAYERS;p++) {
 		if(playerFinishTime[p].plr!=-1) {
 			font.drawString(getPlayer(playerFinishTime[p].plr).getName());
 			glTranslatef(40,0,0);
-			font.printf("%.3f sek.",playerFinishTime[p].time);
+			font.printf("%.3f sec.",playerFinishTime[p].time);
 			glTranslatef(-40,2,0);
 		}
 	}
