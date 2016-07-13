@@ -21,7 +21,7 @@ SOURCES = background.cpp \
 OBJECTS = $(subst .cpp,.o,$(SOURCES))
 
 all: $(OBJECTS) tinyxml
-	$(CC) $(LDFLAGS) -o antigrav $(OBJECTS) tinyxml/libtinyxml.a
+	$(CC) -o antigrav $(OBJECTS) tinyxml/libtinyxml.a $(LDFLAGS)
 
 $(OBJECTS): %.o:
 	$(CC) -c $(CFLAGS) $(subst .o,.cpp,$@) -o $@
