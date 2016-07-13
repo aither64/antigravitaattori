@@ -282,8 +282,13 @@ int Game::gameLoop()
 #endif
 			} else if(event.type == SDL_KEYUP)
 			{
-				// handle player controls
-				updateControls(event.key.keysym.sym, false);
+				if (state == FINISHED && event.key.keysym.sym == SDLK_RETURN) {
+					loop = false;
+
+				} else {
+					// handle player controls
+					updateControls(event.key.keysym.sym, false);
+				}
 
 			} else if (event.type == SDL_CONTROLLERBUTTONUP) {
 				switch (event.cbutton.button) {
@@ -292,6 +297,9 @@ int Game::gameLoop()
 							state = START;
 							stateTimer = 0;
 							stateVal = 0;
+
+						} else if (state == FINISHED) {
+							loop = false;
 						}
 						break;
 
@@ -361,7 +369,7 @@ int Game::gameLoop()
 			case FINISHED:
 				// Update
 				updateWorld(t);
-				if(stateTimer>=5.0)
+				if(stateTimer>=20.0)
 					loop = false;
 		}
 
