@@ -11,6 +11,7 @@ install: all
 	mkdir -p "$(DATADIR)"
 	mv src/antigrav "$(PREFIX)"/bin/
 	cp data/* "$(DATADIR)"/
+	chown -R root:root "$(PREFIX)"/bin/antigrav "$(DATADIR)"/
 
 uninstall:
 	rm -rf "$(DATADIR)"
