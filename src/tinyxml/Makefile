@@ -15,8 +15,8 @@ all: $(TARGET)
 $(TARGET): $(OBJECTS)
 	ar crs $(TARGET) $(OBJECTS)
 
-$(OBJECTS): %.o:
-	$(CC) -c $(CFLAGS) $(subst .o,.cpp,$@) -o $@
+$(OBJECTS): %.o: %.cpp
+	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
 	rm -f *.o

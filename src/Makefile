@@ -23,8 +23,8 @@ OBJECTS = $(subst .cpp,.o,$(SOURCES))
 all: $(OBJECTS) tinyxml
 	$(CC) -o antigrav $(OBJECTS) tinyxml/libtinyxml.a $(LDFLAGS)
 
-$(OBJECTS): %.o:
-	$(CC) -c $(CFLAGS) $(subst .o,.cpp,$@) -o $@
+$(OBJECTS): %.o: %.cpp
+	$(CC) -c $(CFLAGS) $< -o $@
 
 tinyxml:
 	$(MAKE) -C tinyxml
