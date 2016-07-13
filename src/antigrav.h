@@ -7,11 +7,11 @@
 #define MIN(x, y) ( ((x) < (y)) ? (x) : (y) )
 #define MAX(x, y) ( ((x) > (y)) ? (x) : (y) )
 
-#ifdef HAVE_CONFIG_H
-#include "../config.h"
-#else
+#ifndef DATADIR
 #define DATADIR "./data"
 #endif
+
+#define VERSION "0.0.4"
 
 #include "font.h"
 
