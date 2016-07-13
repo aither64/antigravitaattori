@@ -37,6 +37,8 @@ public:
 	
 	Level &getLevel();
 	static Game &getInstance();
+
+	int getPlayerForController(SDL_JoystickID id);
 	
 	void initViewports(int num);
 	
@@ -59,6 +61,8 @@ private:
 	
 	bool updateControls(int keysym, bool down);
 	void updateWorld(float t);
+
+	SDL_Keycode mapControllerAxis(SDL_JoystickID joy, Uint8 axis, Sint16 value);
 	
 	void resetListener();
 	void updateListener();

@@ -2,6 +2,7 @@
 
 #include "SDL.h"
 #include "SDL_opengl.h"
+//#include "SDL_gamecontroller.h"
 #include <AL/alut.h>
 #include <AL/al.h>
 #include <unistd.h>
@@ -93,7 +94,7 @@ int main(int argc, char *argv[])
 	
 	atexit(cleanup);
 
-	if(SDL_Init(SDL_INIT_VIDEO) != 0)
+	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0)
 	{
 		fprintf(stderr, "Can't initialize SDL: %s\n", SDL_GetError());
 		return -1;
@@ -160,15 +161,40 @@ int main(int argc, char *argv[])
 	SDL_ShowCursor(SDL_DISABLE);
 
 	Game &game = Game::getInstance();
+
 	if(game.init(screen)) return 1;
 	if(Menu::init()) return 1;
+
+	SDL_GameController *controllers[8] = {NULL};
+	SDL_GameController *controller = NULL;
+
+	for (int i = 0, j = 0; i < SDL_NumJoysticks(); i++) {
+		if (!SDL_IsGameController(i))
+			continue;
+		
+		controller = SDL_GameControllerOpen(i);
+
+		if (controller) {
+			controllers[j++] = controller;
+
+		} else {
+			fprintf(stderr, "Could not open gamecontroller %i: %s\n", i, SDL_GetError());
+		}
+	}
 
 	Menu menu(screen);
 	while(1) {
 		if(menu.show())
-			return 0;
+			break;
 		if(game.gameLoop())
-			return 0;
+			break;
+	}
+
+	for (int i = 0; i < 8; i++) {
+		if (!controllers[i])
+			break;
+
+		SDL_GameControllerClose(controllers[i]);
 	}
 
 	SDL_GL_DeleteContext(glcontext);

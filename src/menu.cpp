@@ -101,6 +101,51 @@ int Menu::show()
 					}
 				}
 			}
+			else if (event.type == SDL_CONTROLLERBUTTONUP) {
+				Game &game = Game::getInstance();
+
+				if (event.cbutton.button == SDL_CONTROLLER_BUTTON_A ) {
+					int p;
+
+					if ((p = game.getPlayerForController(event.cbutton.which)) == -1) {
+						// Activate the first available player
+						for(int p = 0; p < Game::MAX_LOCAL_PLAYERS; p++) {
+							Player &plr = Game::getInstance().getPlayer(p);
+
+							if (plr.isActive())
+								continue;
+							
+							togglePlayer(plr);
+							plr.setController(event.cbutton.which);
+
+							break;
+						}
+
+					} else {
+						// Player is already active, start the game
+						if (canstart)
+							rval = 0;
+					}
+
+				} else if (event.cbutton.button == SDL_CONTROLLER_BUTTON_B) {
+					// Find out if this joystick already belongs to a player
+					for(int p = 0; p < Game::MAX_LOCAL_PLAYERS; p++) {
+						Player &plr = game.getPlayer(p);
+
+						if (plr.hasController(event.cbutton.which)) {
+							togglePlayer(plr);
+							break;
+						}
+					}
+
+				} else if (event.cbutton.button == SDL_CONTROLLER_BUTTON_START) {
+					if (canstart)
+						rval = 0;
+
+				} else if (event.cbutton.button == SDL_CONTROLLER_BUTTON_BACK) {
+					rval = 1;
+				}
+			}
 		}
 	}
 
@@ -109,12 +154,15 @@ int Menu::show()
 
 void Menu::togglePlayer(int p)
 {
-	Game &game = Game::getInstance();
-	Player &plr = game.getPlayer(p);
+	togglePlayer(Game::getInstance().getPlayer(p));
+}
+
+void Menu::togglePlayer(Player &plr)
+{
 	plr.setActive(!plr.isActive());
 	int act=0;
-	for(int plr=0;plr<4;plr++) {
-		if(game.getPlayer(plr).isActive())
+	for(int p=0;p<4;p++) {
+		if(plr.isActive())
 			++act;
 	}
 	canstart = act>0;

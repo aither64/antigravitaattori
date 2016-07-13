@@ -284,6 +284,50 @@ int Game::gameLoop()
 			{
 				// handle player controls
 				updateControls(event.key.keysym.sym, false);
+
+			} else if (event.type == SDL_CONTROLLERBUTTONUP) {
+				switch (event.cbutton.button) {
+					case SDL_CONTROLLER_BUTTON_A:
+						if (state == WAITFORSTART) {
+							state = START;
+							stateTimer = 0;
+							stateVal = 0;
+						}
+						break;
+
+					case SDL_CONTROLLER_BUTTON_B:
+					case SDL_CONTROLLER_BUTTON_BACK:
+					case SDL_CONTROLLER_BUTTON_START:
+						loop = false;
+						break;
+				}
+
+			} else if (event.type == SDL_CONTROLLERAXISMOTION) {
+				switch (event.caxis.axis) {
+					case SDL_CONTROLLER_AXIS_LEFTX:
+						updateControls(
+							mapControllerAxis(
+								event.caxis.which,
+								event.caxis.axis,
+								event.caxis.value
+							),
+							event.caxis.value < -12000 || event.caxis.value > 12000
+						);
+						break;
+
+					case SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+					case SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+						updateControls(
+							mapControllerAxis(
+								event.caxis.which,
+								event.caxis.axis,
+								event.caxis.value
+							),
+							event.caxis.value > 500
+						);
+						break;
+				}
+				
 			}
 		}
 
@@ -433,6 +477,43 @@ void Game::updateWorld(float t)
 		players[i].getCraft().move();
 	}
 
+}
+
+SDL_Keycode Game::mapControllerAxis(SDL_JoystickID joy, Uint8 axis, Sint16 value)
+{
+	int ctrl;
+
+	for(int i = 0; i < MAX_PLAYERS; i++) {
+		if (!players[i].hasController(joy))
+			continue;
+
+		// Controls in order: right, left, thrust
+		switch(axis) {
+			case SDL_CONTROLLER_AXIS_LEFTX:
+				ctrl = value > 0 ? 0 : 1;
+				break;
+
+			case SDL_CONTROLLER_AXIS_TRIGGERLEFT:
+			case SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+				ctrl = 2;
+				break;
+
+			default:
+				return SDLK_ESCAPE;
+		}
+
+		return CONTROLS[i][ctrl];
+	}
+
+	return SDLK_ESCAPE;
+}
+
+int Game::getPlayerForController(SDL_JoystickID id)
+{
+	for(int p = 0; p < MAX_LOCAL_PLAYERS; p++)
+		if (players[p].hasController(id))
+			return p;
+	return -1;
 }
 
 void Game::initViewports(int num)

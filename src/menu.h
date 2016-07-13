@@ -11,6 +11,7 @@ class Menu {
 		int show();
 	private:
 		void togglePlayer(int p);
+		void togglePlayer(Player &plr);
 		void drawPlayer(int p);
 		void update();
 

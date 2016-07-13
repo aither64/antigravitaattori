@@ -1,6 +1,8 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
+#include "SDL_gamecontroller.h"
+
 class Player
 {
 public:
@@ -13,6 +15,8 @@ public:
 	void setTexture(m3dTexture *texture);
 	void setActive(bool active);
 	void setLocal(bool l);
+	void setController(SDL_JoystickID id);
+	void unsetController();
 	
 	void setColor(float r, float g, float b);
 	void setColor(const float *col);
@@ -29,6 +33,8 @@ public:
 	bool isActive() const;
 	bool isLocal() const;
     bool isFinished() const;
+	bool hasController() const;
+	bool hasController(SDL_JoystickID id) const;
     const char *getName() const;
 	
 	void drawHud(const GLint *viewport, int activePlayers, int num);
@@ -45,6 +51,8 @@ private:
 	float forceMeter;
 	
 	Craft craft;
+
+	SDL_JoystickID joyid;
 
 	bool active;
 	bool local;

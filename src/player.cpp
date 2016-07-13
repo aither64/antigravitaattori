@@ -15,7 +15,8 @@ ALuint Player::buffer;
 float Player::engineVolume = 1.0;
 
 Player::Player()
-	: finished(false)
+	: joyid(-1),
+	finished(false)
 {
 }
 
@@ -69,6 +70,9 @@ void Player::setTexture(m3dTexture *tex)
 void Player::setActive(bool a)
 {
 	active = a;
+
+	if (!active)
+		joyid = -1;
 }
 
 void Player::setLocal(bool l)
@@ -76,10 +80,17 @@ void Player::setLocal(bool l)
 	local = l;
 }
 
+void Player::setController(SDL_JoystickID id)
+{
+	joyid = id;
+}
+
 Craft &Player::getCraft() { return craft; }
 bool Player::isActive() const { return active; }
 bool Player::isLocal() const { return local; }
 const char *Player::getName() const { return name; }
+bool Player::hasController() const { return joyid != -1; }
+bool Player::hasController(SDL_JoystickID id) const { return joyid == id; }
 
 bool Player::isFinished() const { return finished; }
 
