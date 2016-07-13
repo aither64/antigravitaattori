@@ -1,0 +1,8 @@
+* Wed Jul 13 2016 - version 0.0.4
+- Port to libpng 1.6
+- Port to SDL 2.0
+- Replace original build system with simple Makefile
+- Support for game controllers
+
+* Version 0.0.2/0.0.3
+- Initial version
