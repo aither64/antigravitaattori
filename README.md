@@ -19,7 +19,7 @@ This is a forked version of the original game, featuring the following changes:
 
 ### Ubuntu 16.04
 
-	$ apt-get install make g++ libsdl2-dev libalut-dev libglu-dev libopenal-dev
+	$ apt-get install make g++ libsdl2-dev libpng16-dev libalut-dev libglu-dev libopenal-dev
 
 ## Build and install
 
